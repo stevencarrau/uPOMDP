@@ -1,0 +1,169 @@
+// maze example (POMDP)
+// slightly extends that presented in
+// Littman, Cassandra and Kaelbling
+// Learning policies for partially observable environments: Scaling up  
+// Technical Report CS, Brown University
+// gxn 29/01/16
+// (Fixed from storm repo)
+
+// state space (value of variable "s")
+
+//  0  1  2  3  4
+//  5     6     7
+//  8     9    10
+// 11     13   12
+
+// 12 is the target
+
+pomdp
+
+// can observe the walls and target
+observables
+	o
+endobservables
+// o=0 - observation in initial state
+// o=1 - west and north walls (s0)
+// o=2 - north and south ways (s1 and s3)
+// o=3 - north wall (s2)
+// o=4 - east and north way (s4)
+// o=5 - east and west walls (s5, s6, s7, s8, s9 and s10)
+// o=6 - east, west and south walls (s11 and s12)
+// o=7 - the target (s13)
+const double sl=0.2;
+const int K = 3;
+
+formula side = mod(s,3);
+formula total_states = K*3+4;
+formula bottom_left = s=total_states-2;
+formula bottom_right = s=total_states-1;
+formula above_center = s=total_states-4;
+formula above_right = s=total_states-3;
+formula above_left = s=total_states-5;
+formula final_line = s<=total_states & s>total_states-3;
+formula down_obs_side = final_line ? 6 : 5;
+formula down_obs_center = final_line ? 7 : 5;
+formula inside_tunnel = s>7 & s< total_states-5;
+
+
+module maze
+
+	s : [-1..total_states] init -1;
+	o : [0..7];
+	
+	// initialisation
+	[] s=-1 -> 1/11 : (s'=0) & (o'=1)
+			 + 1/11 : (s'=1) & (o'=2)
+			 + 1/11 : (s'=2) & (o'=3)
+			 + 1/11 : (s'=3) & (o'=2)
+			 + 1/11 : (s'=4) & (o'=4)
+			 + 1/11 : (s'=5) & (o'=5)
+			 + 1/11 : (s'=6) & (o'=5)
+			 + 1/11 : (s'=7) & (o'=5)
+			 + 1/11 : (s'=8) & (o'=5)
+			 + 1/11 : (s'=9) & (o'=5)
+			 + 1/11 : (s'=10) & (o'=5);
+			 //+ 1/13 : (s'=11) & (o'=6)
+			 //+ 1/13 : (s'=12) & (o'=6);
+	
+	// moving around the maze
+	
+	[east] s=0 -> 1:(s'=1) & (o'=2);
+	[west] s=0 -> (s'=0);
+	[north] s=0 -> (s'=0);
+	[south] s=0 -> 1:(s'=5) & (o'=5);
+
+	[east] s=1 -> 1:(s'=2) & (o'=3);
+	[west] s=1 -> 1:(s'=0) & (o'=1);
+	[north] s=1 -> (s'=1);
+	[south] s=1 -> (s'=1);
+
+	[east] s=2 -> 1:(s'=3) & (o'=2);
+	[west] s=2 -> 1:(s'=1) & (o'=2) ;
+	[north] s=2 -> (s'=2);
+	[south] s=2 -> 1:(s'=6) & (o'=5);
+
+	[east] s=3 -> 1:(s'=4) & (o'=4);
+	[west] s=3 -> (1-sl):(s'=2) & (o'=3) + sl:(s'=s) & (o'=o);
+	[north] s=3 -> (s'=3);
+	[south] s=3 -> (s'=3);
+
+	[east] s=4 -> (s'=4);
+	[west] s=4 -> 1:(s'=3) & (o'=2);
+	[north] s=4 -> (s'=4);
+	[south] s=4 -> 1:(s'=7) & (o'=5) ;
+	
+	[east] s=5 -> (s'=5);
+	[west] s=5 -> 1:(s'=5);
+	[north] s=5 -> (s'=0) & (o'=1);
+	[south] s=5 -> 1:(s'=8) & (o'=down_obs_side) ;
+	
+	
+	[east] s=6 -> (s'=6);
+	[west] s=6 -> 1:(s'=6);
+	[north] s=6 -> (s'=2) & (o'=3);
+	[south] s=6 -> 1:(s'=9) & (o'=down_obs_center) ;
+	
+	
+	[east] s=7 -> (s'=7);
+	[west] s=7 -> 1:(s'=7);
+	[north] s=7 -> (s'=4) & (o'=4);
+	[south] s=7 -> 1:(s'=10) & (o'=down_obs_side);
+	
+	[east] bottom_left -> (s'=s);
+	[west] bottom_left -> 1:(s'=s);
+	[north] bottom_left -> (s'=s-3) & (o'=5);
+	[south] bottom_left -> 1:(s'=s);
+	
+	[east] bottom_right -> (s'=s);
+	[west] bottom_right -> 1:(s'=s);
+	[north] bottom_right -> (s'=s-3) & (o'=5);
+	[south] bottom_right -> 1:(s'=s);
+	
+	[east] above_left -> (s'=s);
+	[west] above_left -> 1:(s'=s);
+	[north] above_left -> (s'=s-3) & (o'=5);
+	[south] above_left -> 1:(s'=s+3) & (o'=6);
+	
+	[east] above_right -> (s'=s);
+	[west] above_right -> 1:(s'=s);
+	[north] above_right -> (s'=s-3) & (o'=5);
+	[south] above_right -> 1:(s'=s+2) & (o'=6);
+	
+	
+	[east] above_center -> (s'=s);
+	[west] above_center -> 1:(s'=s);
+	[north] above_center -> (s'=s-3) & (o'=5);
+	[south] above_center -> 1:(s'=s+4) & (o'=7);
+	
+	
+	
+	
+	
+	[east] inside_tunnel -> (s'=s);
+	[west] inside_tunnel -> 1:(s'=s);
+	[north] inside_tunnel -> (s'=s-3) & (o'=5);
+	[south] inside_tunnel -> 1:(s'=s+3) & (o'=5);
+	
+	
+
+
+
+	// loop when we reach the target
+	[done] s=total_states -> true;
+
+endmodule
+
+// reward structure (number of steps to reach the target)/7
+rewards
+	s < 13 : 1;
+	//[east] true : 1/7;
+	//[west] true : 1/7;
+	//[north] true : 1/7;
+	//[south] true : 1/7;
+
+endrewards
+
+// target observation
+label "goal" = o=7;
+label "bad" = o=6;
+
