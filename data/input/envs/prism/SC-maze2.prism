@@ -29,10 +29,9 @@ endobservables
 // o=5 - east and west walls (s5, s6, s7, s8, s9 and s10)
 // o=6 - east, west and south walls (s11 and s12)
 // o=7 - the target (s13)
-const double sl=0.2;
-const int K = 3;
+const double sl;
+const int K = 5;
 
-formula side = mod(s,3);
 formula total_states = K*3+4;
 formula bottom_left = s=total_states-2;
 formula bottom_right = s=total_states-1;
@@ -47,7 +46,7 @@ formula inside_tunnel = s>7 & s< total_states-5;
 
 module maze
 
-	s : [-1..total_states] init -1;
+	s : [-1..19] init -1;
 	o : [0..7];
 	
 	// initialisation

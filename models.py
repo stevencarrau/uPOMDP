@@ -18,12 +18,12 @@ class Wrapper:
 
         self.is_parametric = isinstance(model.transition_matrix, stormpy.ParametricSparseMatrix)
 
-        self.all_parameters = set()
+        self.all_parameters = set([])
         self.reward_parameters = set()
         self.probability_parameters = set()
         self.wellformed_constrains = set()
         self.graph_preserving_constraints = set()
-        self.p_names = []
+        self.p_names = ['sl']
 
         if model.has_parameters:
             self.all_parameters = model.collect_all_parameters()
@@ -93,7 +93,8 @@ class Wrapper:
                 for s in range(self.nS):
                     self.rewards[s, r] = utils.value_to_float(reward_model.state_rewards[s])
             else:
-                raise NotImplementedError('Only state-based rewards are implemented.')
+                pass
+                # raise NotImplementedError('Only state-based rewards are implemented.')
 
             #     self.reward_bases[reward_model_str] = 'state_action'
             #     rewards = reward_model.state_action_rewards

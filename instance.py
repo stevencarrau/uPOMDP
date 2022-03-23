@@ -79,13 +79,13 @@ class Instance:
         options = stormpy.BuilderOptions([p.raw_formula for p in self.properties])
         options.set_build_choice_labels()
         options.set_build_with_choice_origins()
+
         if self.kind == 'reward':
             options.set_build_all_labels()
             options.set_build_all_reward_models()
             options.set_build_state_valuations()
 
         if prism_program.has_undefined_constants:
-            # model = stormpy.build_parametric_model(prism_program, properties = self.properties)
             model = stormpy.build_sparse_parametric_model_with_options(prism_program, options)
         else:
             model = stormpy.build_sparse_model_with_options(prism_program, options)

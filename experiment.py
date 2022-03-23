@@ -84,7 +84,7 @@ class Experiment:
             pdtmc = instance.instantiate_pdtmc(fsc, zero = 0)
             fsc_memories, fsc_policies = fsc.simulate(observations)
             log_fsc_policies = np.log(fsc_policies) / np.expand_dims(np.log(num_choices), axis = -1)
-            log_fsc_policies[np.isinf(log_policies)] = 0
+            log_fsc_policies[np.logical_not(np.isfinite(log_fsc_policies))] = 0
             all_entropies = np.sum(fsc_policies * - log_fsc_policies, axis = -1)
             relevant_entropies = all_entropies[np.logical_and(relevant_timesteps, num_actions > 1)]
             fsc_entropy = np.mean(relevant_entropies)
