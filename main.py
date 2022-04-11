@@ -1,5 +1,5 @@
 from experiment import Experiment
-import stormpy
+import gridstorm
 
 cfg = {'name':'maze2',
 'formula_str':'Rmax=? [F "goal"]',
@@ -31,30 +31,6 @@ cfg = {'name':'maze2',
 'pso_phi_r':0.5,
 'batch_dim':4
 }
-
-
-# prism_program = stormpy.parse_prism_program('data/input/envs/prism/maze2.prism')
-# expression_manager = prism_program.expression_manager
-# constants = prism_program.constants
-# undefined_constants = []
-# for c in constants:
-#    if not c.defined:
-#       undefined_constants.append(c.expression_variable)
-#       # if c.name not in self.p_bounds:
-#       #    raise ValueError(f'Parameter {c.name} appears in PRISM program, but no bounds were set.')
-#
-# options = stormpy.BuilderOptions([stormpy.parse_properties_without_context(cfg['formula_str'])[0].raw_formula])
-# options.set_build_choice_labels()
-# options.set_build_with_choice_origins()
-# options.set_build_all_labels()
-# options.set_build_all_reward_models()
-# options.set_build_state_valuations()
-#
-# if prism_program.has_undefined_constants:
-#    # model = stormpy.build_parametric_model(prism_program, properties = self.properties)
-#    model = stormpy.build_sparse_parametric_model_with_options(prism_program, options)
-
-# model = stormpy.pomdp.make_canonic(model)
 
 exp = Experiment('test',cfg,10)
 

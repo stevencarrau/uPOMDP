@@ -1,16 +1,37 @@
 import numpy as np
 from copy import deepcopy
+
+import stormpy
 from scipy.stats import entropy
 import tensorflow as tf
 import pycarl
 from joblib import Parallel, delayed
 from mem_top import mem_top
+import inspect
 
 from net import Net
 from instance import Instance
 from check import Checker
 from in_out import Log, clear_cache
 import utils
+
+import gridstorm.models as models
+
+experiment_to_grid_model_names = {
+    "avoid": models.surveillance,
+    "refuel": models.refuel,
+    'obstacle': models.obstacle,
+    "intercept": models.intercept,
+    'evade': models.evade,
+    'rocks': models.rocks
+}
+
+model = experiment_to_grid_model_names["obstacle"]
+model_constants = list(inspect.signature(model).parameters.keys())
+constants = ["N=6"] #dict(item.split('=') for item in args.constants.split(","))
+input = model(constants)
+model = stormpy.parse_prism_program(input.path)
+print("")
 
 class Experiment:
     """ Represents a set of cfgs that serve an experiment. """
