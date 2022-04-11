@@ -15,24 +15,6 @@ from check import Checker
 from in_out import Log, clear_cache
 import utils
 
-import gridstorm.models as models
-
-experiment_to_grid_model_names = {
-    "avoid": models.surveillance,
-    "refuel": models.refuel,
-    'obstacle': models.obstacle,
-    "intercept": models.intercept,
-    'evade': models.evade,
-    'rocks': models.rocks
-}
-
-model = experiment_to_grid_model_names["obstacle"]
-model_constants = list(inspect.signature(model).parameters.keys())
-constants = ["N=6"] #dict(item.split('=') for item in args.constants.split(","))
-input = model(constants)
-model = stormpy.parse_prism_program(input.path)
-print("")
-
 class Experiment:
     """ Represents a set of cfgs that serve an experiment. """
 
