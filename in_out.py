@@ -4,7 +4,6 @@ import seaborn as sns
 import tensorflow as tf
 import pandas as pd
 import numpy as np
-from varname import nameof
 import stormpy
 import shutil
 from datetime import datetime, timedelta
