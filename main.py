@@ -2,13 +2,13 @@ from experiment import Experiment
 import stormpy
 
 cfg = {'name':'maze2',
-'formula_str':'Rmax=? [F "goal"]',
+'formula_str':'Rmin=? [F "goal"]',
     'batch_size':128,
        'epochs':32, #
        'ctrx_gen':'crt_full', # Counterexample generation
        'rounds':10,
        'p_init':{'sl':0.2}, # First parameter initialization
-       'p_evals':[0.1,0.2,0.3,0.4],
+       'p_evals': [{'sl': 0.1}, {'sl': 0.2}, {'sl': 0.3}, {'sl': 0.4}],
        'p_bounds':{'sl':[0.1,0.4]},
        'a_memory_dim':3,
        'bottleneck_dim':2, # Base for number of memory nodes
@@ -25,6 +25,7 @@ cfg = {'name':'maze2',
        'pso_n':500,
        'pso_fr':0.5,
        'blow_up':2,
+'pso_lr':0.1,
 'pso_ar':0.2,
 'pso_rounds':5,
 'pso_phi_g':0.5,
