@@ -25,6 +25,7 @@ cfg = {'name':'maze2',
        'pso_n':500,
        'pso_fr':0.5,
        'blow_up':2,
+       'policy': 'qmdp', # mdp or qmdp
 'pso_lr':0.1,
 'pso_ar':0.2,
 'pso_rounds':5,

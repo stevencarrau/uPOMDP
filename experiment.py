@@ -114,10 +114,17 @@ class Experiment:
             length = instance.simulation_length()
             evalues = check.evaluate(cfg['p_evals'])
 
-            if instance.objective == 'min':
-                a_labels = utils.one_hot_encode(np.nanargmin(mdp.action_values[states], axis = -1), pomdp.nA, dtype = 'float32')
+            if cfg['policy'] == 'mdp':
+                q_values = mdp.action_values[states]
+            elif cfg['policy'] == 'qmdp':
+                q_values = np.matmul(beliefs, mdp.action_values)
             else:
-                a_labels = utils.one_hot_encode(np.nanargmax(mdp.action_values[states], axis = -1), pomdp.nA, dtype = 'float32')
+                raise ValueError("invalid policy")
+
+            if instance.objective == 'min':
+                a_labels = utils.one_hot_encode(np.nanargmin(q_values, axis = -1), pomdp.nA, dtype ='float32')
+            else:
+                a_labels = utils.one_hot_encode(np.nanargmax(q_values, axis = -1), pomdp.nA, dtype ='float32')
             a_inputs = utils.one_hot_encode(observations, pomdp.nO, dtype = 'float32')
             a_loss = net.improve_a(a_inputs, a_labels)
 
