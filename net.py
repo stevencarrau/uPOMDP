@@ -58,7 +58,7 @@ class Net(tf.keras.Model):
         observation = np.array([np.squeeze(pomdp.initial_observation) for s in range(batch_dim)], dtype = 'int64')
 
         belief = np.zeros((batch_dim, pomdp.nS))
-        # belief[:, pomdp.initial_state] = 1
+        belief[:, pomdp.initial_state] = 1
 
         reset = self.qbn_gru_rnn.reset(batch_dim, quantize)
         if quantize:
@@ -68,8 +68,7 @@ class Net(tf.keras.Model):
 
         for l in range(length):
 
-            # beliefs[:, l] = belief
-
+            beliefs[:, l] = belief
             states[:, l] = state
             observations[:, l] = observation
 
@@ -90,14 +89,14 @@ class Net(tf.keras.Model):
             state = ut.choice_from_md(mdp.T[state, action], batch_dim)
             observation = pomdp.O[state]
 
-            # next_belief = np.zeros((batch_dim, pomdp.nS))
-            # for b in range(batch_dim):
-            #     possible_states = np.where(pomdp.O == observation[b])
-            #     next_belief[b, possible_states] = 1
-            #     for possible_state in range(pomdp.nS):
-            #         next_belief[b, possible_state] *= np.sum(belief[b] * mdp.T[:, action[b], possible_state], axis = 0)
-            #     next_belief[b] = ut.normalize(next_belief[b])
-            # belief = np.array(next_belief)
+            next_belief = np.zeros((batch_dim, pomdp.nS))
+            for b in range(batch_dim):
+                possible_states = np.where(pomdp.O == observation[b])
+                next_belief[b, possible_states] = 1
+                for possible_state in range(pomdp.nS):
+                    next_belief[b, possible_state] *= np.sum(belief[b] * mdp.T[:, action[b], possible_state], axis=0)
+                next_belief[b] = ut.normalize(next_belief[b])
+            belief = np.array(next_belief)
 
         if quantize:
             if inspect:
