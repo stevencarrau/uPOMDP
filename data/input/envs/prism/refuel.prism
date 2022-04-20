@@ -5,7 +5,7 @@ start
 endobservables
 
 const int N=6;
-const int ENERGY=7;
+const int ENERGY=8;
 const int RESOLUTION = 2;
 const int fuelCAP = ENERGY;
 const int axMAX = N-1;
@@ -76,33 +76,12 @@ module rover
     [north]  westenabled -> (1-sl): (ay'=max(ay-1,ayMIN)) + sl: (ay'=max(ay-2,ayMIN));
 endmodule
 
-rewards "costs"
-    [north] true : 0;
-    [south] true : 0;
-    [west] true : 0;
-    [east] true : 0;
-    [refuel] true : 0;
-    [empty] true : 0;
-endrewards
-
-rewards "gains"
-    [] done=true : 10;
-endrewards
-
-
-rewards "steps"
-    [north] true : 1;
-    [south] true : 1;
-    [west] true : 1;
-    [east] true : 1;
-endrewards
-
-rewards "refuels"
+rewards
     [refuel] true : 1;
 endrewards
 
 
 label "goal" = done;
 label "traps" = crash;
-label "stationvisit" = atStation;
-label "notbad" =  !crash & (fuel > 0 | canRefuel);
+//label "stationvisit" = atStation;
+//label "notbad" =  !crash & (fuel > 0 | canRefuel);
