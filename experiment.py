@@ -120,7 +120,9 @@ class Experiment:
             if cfg['policy'] == 'mdp':
                 q_values = mdp.action_values[states]
             elif cfg['policy'] == 'qmdp':
-                q_values = np.matmul(beliefs, mdp.action_values)
+                nan = 10**10 if instance.objective == 'min' else -10**10
+                q = np.nan_to_num(mdp.action_values, nan=nan)
+                q_values = np.matmul(beliefs, q)
             else:
                 raise ValueError("invalid policy")
 
