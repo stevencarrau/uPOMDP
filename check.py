@@ -122,7 +122,8 @@ class CheckResultWrapper:
         n = self.cfg['pso_n']
         particles = np.random.rand(n, len(ps))
         for idx, p in enumerate(p_bounds):
-            particles[:, idx] = np.clip(particles[:, idx], p_bounds[p][0], p_bounds[p][1]) # clip to keep bounds of parameters.
+            l, u = p_bounds[p][0], p_bounds[p][1]
+            particles[:, idx] = (u - l) * (particles[:, idx] - 1) + u
         particle_fitnesses = self._evaluate(ps, particles)
         velocities = np.random.uniform(low = -0.99, high = 0.99, size = (n, len(ps)))
 
