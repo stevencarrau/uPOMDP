@@ -77,11 +77,16 @@ module rover
 endmodule
 
 rewards
-    [refuel] true : 1;
+    [refuel] true : 2;
+    [west] true : 1;
+    [east] true : 1;
+    [south] true : 1;
+    [north] true : 1;
+    [empty] true : 1;
 endrewards
 
 
 label "goal" = done;
 label "traps" = crash;
-//label "stationvisit" = atStation;
-//label "notbad" =  !crash & (fuel > 0 | canRefuel);
+label "stationvisit" = atStation;
+label "notbad" =  !crash & (fuel > 0 | canRefuel);

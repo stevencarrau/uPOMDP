@@ -177,7 +177,8 @@ class Instance:
         T = np.zeros((self.pomdp.nS * nM, self.pomdp.nS * nM), dtype = 'float64')
         D = np.zeros((self.pomdp.nS * nM, self.pomdp.nS * nM, len(ps)), dtype = 'float64')
         C = np.zeros((self.pomdp.nS * nM, self.pomdp.nS * nM, len(ps)), dtype = 'float64')
-        observation_labels = {observation_label : [] for observation_label in self.pomdp.observation_labels}
+        observations_label_set = set.union(*[set(s) for s in self.pomdp.observation_labels])
+        observation_labels = {observation_label : [] for observation_label in observations_label_set}
         state_labels = []
         memory_labels = []
         rewards_strs = ['' for r_idx in range(self.pomdp.num_reward_models)]
@@ -196,7 +197,8 @@ class Instance:
                 state_labels.append(s)
                 memory_labels.append(m)
                 mean_r = 0
-                observation_labels[observation_label].append(prod_state)
+                for o_i in observation_label:
+                    observation_labels[o_i].append(prod_state)
                 for action in self.pomdp.model.states[s].actions:
                     a = action.id
                     for transition in action.transitions:

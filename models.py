@@ -40,8 +40,8 @@ class Wrapper:
         self.nA = max([len(state.actions) for state in self.model.states])
 
         self.all_labels = []
-        self.observation_labels = np.full((self.nO), 'no label added no label added')
-        self.state_labels = np.full((self.nS), 'no label added no label added no label')
+        self.observation_labels = np.array([['no label added no label added'] for n in range(self.nO)],dtype=object).flatten() #np.full((self.nO), 'no label added no label added')
+        self.state_labels = np.array([['no label added no label added'] for n in range(self.nS)],dtype=object).flatten()  #np.full((self.nS), 'no label added no label added no label')
 
         self.policy_mask = np.zeros((self.nO, self.nA))
         self.choice_labels = []
@@ -60,7 +60,7 @@ class Wrapper:
                     self.labels_to_states[label] = [state.id]
             self.states_to_labels.append(list(state.labels))
 
-            label = ' '.join(state.labels)
+            label = list(state.labels) #' '.join(state.labels)
             self.observation_labels[self.O[state.id]] = label
             self.state_labels[state.id] = label
             self.choices_per_state.append([])
@@ -76,11 +76,11 @@ class Wrapper:
                 self.choices_per_state[-1].append(action.id)
 
             state_labels = list(state.labels)
-            self.all_labels.append(labels)
+            self.all_labels.append(state_labels)
 
         self.num_choices_per_state = np.array([len(c) for c in self.choices_per_state])
         self.choices_per_observation = {r : list(self.choices_per_observation[r]) for r in self.choices_per_observation}
-        self.choices_per_observation_label = {self.observation_labels[r] : self.choices_per_observation[r] for r in self.choices_per_observation}
+        self.choices_per_observation_label = {c_i : self.choices_per_observation[r] for r in self.choices_per_observation for c_i in self.observation_labels[r]} #{self.observation_labels[r] : self.choices_per_observation[r] for r in self.choices_per_observation}
         self.reward_models = model.reward_models
         self.num_reward_models = len(self.reward_models)
         self.reward_bases = {}
