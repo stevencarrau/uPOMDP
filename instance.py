@@ -251,19 +251,29 @@ class Instance:
         for s in range(self.pomdp.nS * nM):
             transitions_string = f'\t[] s={s} ->'
             has_outgoing = False
+            state_tup = (s,)
+            trans_dict_c = dict()
+            trans_dict_d = dict()
             for next_s in range(self.pomdp.nS * nM):
                 trans_prob = T[s, next_s]
                 derivative = D[s, next_s]
                 constant = C[s, next_s]
+                next_tup = (next_s,)
                 if np.any(derivative != 0): # transition is parametric.
                     for p_index, p in enumerate(ps):
-                        d = derivative[p_index]
-                        c = constant[p_index]
-                        transitions_string += f" ({c} + {d}*{p}) : (s'={next_s}) +"
+                        trans_dict_d.update({state_tup+next_tup+(p,):derivative[p_index]})
+                        trans_dict_c.update({state_tup+next_tup+(p,):constant[p_index]})
+                        # d = derivative[p_index]
+                        # c = constant[p_index]
+                        # transitions_string += f" ({c} + {d}*{p}) : (s'={next_s}) +"
                     has_outgoing = True
                 elif trans_prob > 0:
                     transitions_string += f" {trans_prob} : (s'={next_s}) +"
                     has_outgoing = True
+            for t_d in trans_dict_d:
+                if trans_dict_c[t_d] == 0:
+                    trans_dict_c[t_d] = 1-sum(trans_dict_c.values())
+                transitions_string += f" ({trans_dict_c[t_d]} + {trans_dict_d[t_d]}*{t_d[2]}) : (s'={t_d[1]}) +"
 
             if has_outgoing:
                 transitions_strings += transitions_string[:-2] + ';\n'
