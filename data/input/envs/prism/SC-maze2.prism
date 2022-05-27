@@ -46,7 +46,7 @@ formula inside_tunnel = s>7 & s< total_states-5;
 
 module maze
 
-	s : [-1..19] init -1;
+	s : [-1..total_states] init -1;
 	o : [0..7];
 	
 	// initialisation
