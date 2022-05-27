@@ -70,7 +70,7 @@ module maze
 
 	[east] bottom_right -> (s'=s);
 	[west] bottom_right -> 1:(s'=s);
-	[north] bottom_right -> (s'=s-3) & (o'=5);
+	[north] bottom_right -> (s'=s-2) & (o'=5);
 	[south] bottom_right -> 1:(s'=s);
 
 	[east] above_left -> (s'=s);
@@ -80,7 +80,7 @@ module maze
 
 	[east] above_right -> (s'=s);
 	[west] above_right -> 1:(s'=s);
-	[north] above_right -> (s'=s-3) & (o'=5);
+	[north] above_right -> (s'=s-2) & (o'=5);
 	[south] above_right -> (1-sl):(s'=s+2) & (o'=6) + sl:(s'=s+3)&(o'=7);
 
 	[east] above_center -> (s'=s);

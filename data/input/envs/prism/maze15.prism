@@ -65,12 +65,12 @@ module maze
 
 	[east] bottom_left -> (s'=s);
 	[west] bottom_left -> 1:(s'=s);
-	[north] bottom_left -> (s'=s-3) & (o'=5);
+	[north] bottom_left ->  1-sl:(s'=s-3) & (o'=5)+sl:(s'=s);
 	[south] bottom_left -> 1:(s'=s);
 
 	[east] bottom_right -> (s'=s);
 	[west] bottom_right -> 1:(s'=s);
-	[north] bottom_right -> (s'=s-3) & (o'=5);
+	[north] bottom_right ->  1-sl:(s'=s-2) & (o'=5)+sl:(s'=s);
 	[south] bottom_right -> 1:(s'=s);
 
 	[east] above_left -> (s'=s);
