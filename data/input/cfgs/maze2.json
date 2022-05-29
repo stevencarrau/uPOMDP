@@ -1,7 +1,7 @@
 {"maze2":[{"name":"maze2",
 "formula_str":"Rmin=? [F \"goal\"]",
-"batch_size":128,
-"epochs":32,
+"batch_size":1000,
+"epochs":250,
 "ctrx_gen":"crt_full",
 "rounds":100,
 "p_init":{"sl":0.2},
@@ -10,10 +10,10 @@
 "a_memory_dim":3,
 "bottleneck_dim":2,
 "a_lr":0.001,
-"r_lr": 0.001,
+"r_lr": 0.003,
 "length":50,
-"r_batch_size":128,
-"r_epochs":16,
+"r_batch_size":256,
+"r_epochs":32,
 "a_batch_size":128,
 "a_epochs":16,
 "num_hx_qbns":8,
@@ -22,13 +22,13 @@
 "pso_n":500,
 "pso_fr":0.5,
 "blow_up":2,
-"policy": "qmdp",
+"policy": "mdp",
 "pso_lr":0.1,
 "pso_ar":0.2,
 "pso_rounds":5,
 "pso_phi_g":0.5,
 "pso_phi_r":0.5,
-"batch_dim":4
+"batch_dim":2
 }
 ]
 }

@@ -77,12 +77,12 @@ module rover
 endmodule
 
 rewards
-    [refuel] true : 2;
+    [refuel] true : 3;
     [west] true : 1;
     [east] true : 1;
     [south] true : 1;
     [north] true : 1;
-    [empty] true : 1;
+    [empty] true : 100;
 endrewards
 
 

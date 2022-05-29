@@ -1,4 +1,4 @@
-{"mazes":[{"name":"maze5",
+{"mazes":[{"name":"maze2",
 "formula_str":"Rmin=? [F \"goal\"]",
 "batch_size":200,
 "epochs":64,
