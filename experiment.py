@@ -30,6 +30,7 @@ class Experiment:
             configuration[key] = new_cfg[key]
         self.cfgs.append(configuration)
 
+
     def execute(self, multi_thread):
         log = Log(self)
         if multi_thread:

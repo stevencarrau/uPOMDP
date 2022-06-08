@@ -3,7 +3,7 @@ import stormpy.pomdp
 from copy import deepcopy
 import numpy as np
 from datetime import datetime
-from models import POMDPWrapper, MDPWrapper, PDTMCModelWrapper
+from models import POMDPWrapper, MDPWrapper, PDTMCModelWrapper,Wrapper
 import math
 import os
 
@@ -57,6 +57,7 @@ class Instance:
         self.pareto_front = [] # list of Pareto-efficient FScs.
         self.pareto_values = [] # list of Pareto-efficient values.
         self._solutions = [] # list of all FSCs and values.
+        self.mdp_include = True if cfg.get("mdp_include") else False
 
     def build_pomdp(self):
         """
@@ -126,15 +127,45 @@ class Instance:
             string = ''.join([f'{key} = %.2f ' % p_values[key] for key in p_values])
             utils.inform('Instantiating POMDP with ' + string)
         elif ps is not None:
-            utils.inform('Trying to instantiate an MDP that is not parametric.', itype = 'WARNING')
+            utils.inform('Trying to instantiate an MDP that is not parametric.', itype = 'WARNING')\
 
-        transition_matrix, labeling, reward_models = self.pomdp.model_components(p_values)
-        components = stormpy.SparseModelComponents(
-            transition_matrix = transition_matrix,
-            state_labeling = labeling,
-            reward_models = reward_models,
-            rate_transitions = False)
-        model =  stormpy.storage.SparseMdp(components)
+        if self.mdp_include:
+            path = in_out.cache_mdp(in_out.read_and_replace(self.name,p_values),self.name)
+            prism_program = stormpy.parse_prism_program(path)
+            expression_manager = prism_program.expression_manager
+            constants = prism_program.constants
+            undefined_constants = []
+            for c in constants:
+                if c in ps:
+                    c.defined = True
+                    # c.definition = stormpy.storage.Expression()
+                if not c.defined:
+                    undefined_constants.append(c.expression_variable)
+                    if c.name not in self.p_bounds:
+                        raise ValueError(f'Parameter {c.name} appears in PRISM program, but no bounds were set.')
+
+            options = stormpy.BuilderOptions([p.raw_formula for p in self.properties])
+            options.set_build_choice_labels()
+            options.set_build_with_choice_origins()
+
+            if self.kind == 'reward':
+                options.set_build_all_labels()
+                options.set_build_all_reward_models()
+                options.set_build_state_valuations()
+
+            if prism_program.has_undefined_constants:
+                model = stormpy.build_sparse_parametric_model_with_options(prism_program, options)
+            else:
+                model = stormpy.build_sparse_model_with_options(prism_program, options)
+
+        else:
+            transition_matrix, labeling, reward_models = self.pomdp.model_components(p_values)
+            components = stormpy.SparseModelComponents(
+                transition_matrix = transition_matrix,
+                state_labeling = labeling,
+                reward_models = reward_models,
+                rate_transitions = False)
+            model =  stormpy.storage.SparseMdp(components)
         if not hasattr(self, 'old_state_values'):
             self.mdp = MDPWrapper(model, self.pomdp.properties)
             self.old_state_values = np.array(self.mdp.state_values)
@@ -143,7 +174,7 @@ class Instance:
             self.mdp = MDPWrapper(model, self.pomdp.properties)
         if self.cfg['ctrx_gen'] == 'crt_full' or self.cfg['ctrx_gen'] == 'rnd':
             self._remember_labels()
-        return self.mdp
+            return self.mdp
 
     def instantiate_pdtmc(self, fsc, zero = 1e-8):
         """

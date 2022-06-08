@@ -20,6 +20,7 @@ import json
 from transitions.extensions import GraphMachine as Machine
 import os
 from os import walk
+import re
 
 import utils
 
@@ -27,6 +28,24 @@ BASE_OUTPUT_PATH = 'data/output'
 BASE_CACHE_PATH = 'data/cache'
 PRISM_ENVS_PATH = 'data/input/envs/prism'
 DPI = 400
+
+def cache_mdp(mdp_str,model_name):
+    fn = f'{BASE_CACHE_PATH}/{model_name}_mdp.prism'
+    with open(fn,'w') as file:
+        file.write(mdp_str)
+    return fn
+
+def read_and_replace(model_name,p_values):
+    fn = f"{PRISM_ENVS_PATH}/{model_name}_mdp.prism"
+    with open(fn,'r') as myfile:
+        data = ""
+        lines = myfile.readlines()
+        for line in lines:
+            data = data + '\n' + line.strip();
+        for r_in in p_values:
+            r = re.compile(r_in)
+            data = r.sub(f'{r_in}={p_values[r_in]}', data, 1)
+    return data
 
 def cache_pdtmc(pdtmc_str):
     """ Outputs pdtmc_str in args with filename established from current timestamp. """

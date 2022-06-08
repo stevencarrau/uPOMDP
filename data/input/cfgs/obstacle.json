@@ -28,7 +28,9 @@
 "pso_rounds":5,
 "pso_phi_g":0.5,
 "pso_phi_r":0.5,
-"batch_dim":4
+"batch_dim":4,
+ "mdp_include": true
+
 }
 ]
 }
