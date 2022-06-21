@@ -1,5 +1,8 @@
+import copy
+
 import numpy as np
 from copy import deepcopy
+import time
 
 import stormpy
 from scipy.stats import entropy
@@ -33,13 +36,16 @@ class Experiment:
 
     def execute(self, multi_thread):
         log = Log(self)
+        logs = []
         if multi_thread:
             Parallel(n_jobs = 4)(delayed(self._run)(log, cfg_idx, run_idx) for cfg_idx in range(len(self.cfgs)) for run_idx in range(self.num_runs))
         else:
             for cfg_idx in range(len(self.cfgs)):
                 for run_idx in range(self.num_runs):
                     self._run(log, cfg_idx, run_idx)
+                    logs.append(copy.deepcopy(log))
         utils.inform(f'Finished experiment {self.name}.', indent = 0, itype = 'OKGREEN')
+        log.output_benchmark_table(logs,log.base_output_dir)
 
     def _run(self, log, cfg_idx, run_idx):
 
@@ -139,13 +145,13 @@ class Experiment:
             label_cross_entropy = np.mean(label_cross_entropies)
 
             log.flush(cfg_idx, run_idx, nM = fsc.nM_generated, lb = check._lb_values[0], ub = check._ub_values[0],
-                    ps = ps, mdp_value = mdp.state_values[0], max_distance = check.max_distance,
-                    min_distance = check.min_distance,
-                    evalues = evalues, worst_ps = worst_ps, added = added, slack = worst_value - check._ub_values[0],
-                    empirical_result = empirical_result, front_values = np.array(instance.pareto_values),
-                    mdp_policy = np.nanargmin(mdp.action_values, axis = -1), a_loss = np.array(a_loss), r_loss = np.array(r_loss),
-                    fsc_entropy = fsc_entropy, rnn_entropy = rnn_entropy, cross_entropy = cross_entropy, label_cross_entropy = label_cross_entropy,
-                    bounded_reach_prob = check.bounded_reach_prob)
+                      ps = ps, mdp_value = mdp.state_values[0], max_distance = check.max_distance,
+                      min_distance = check.min_distance,
+                      evalues = evalues, worst_ps = worst_ps, added = added, slack = worst_value - check._ub_values[0],
+                      empirical_result = empirical_result, front_values = np.array(instance.pareto_values),
+                      mdp_policy = np.nanargmin(mdp.action_values, axis = -1), a_loss = np.array(a_loss), r_loss = np.array(r_loss),
+                      fsc_entropy = fsc_entropy, rnn_entropy = rnn_entropy, cross_entropy = cross_entropy, label_cross_entropy = label_cross_entropy,
+                      bounded_reach_prob = check.bounded_reach_prob)
 
             utils.inform(f'{run_idx}-{round_idx}\t(RNN)\t\taloss \t%.4f' % a_loss[0] + '\t>>>> %3.4f' % a_loss[-1], indent = 0)
-
+        log.collect(result_at_init=check.result_at_init,duration=time.time()-log.time,cum_rewards=empirical_result,evalues=evalues,k=fsc.nM_generated)

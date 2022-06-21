@@ -9,5 +9,5 @@ for filename in load_file:
    for cfg in load_file[filename]:
       for policy in ["qmdp", "mdp"]:
          cfg["policy"] = policy
-         exp = Experiment(cfg["name"] + "_" + policy, cfg, 10)
+         exp = Experiment(cfg["name"] + "_" + policy, cfg, 100)
          exp.execute(False)

@@ -87,6 +87,55 @@ class Log:
 
         self.time = time.time()
 
+    @property
+    def result_at_init(self):
+        return self._result_at_init
+
+    @result_at_init.setter
+    def result_at_init(self, value):
+        self._result_at_init = value
+
+    @property
+    def duration(self):
+        return self._duration
+
+    @duration.setter
+    def duration(self, value):
+        self._duration = value
+
+    @property
+    def cum_rewards(self):
+        return self._cum_rewards
+
+    @cum_rewards.setter
+    def cum_rewards(self, value):
+        self._cum_rewards = value
+
+    @property
+    def evalues(self):
+        return self._evalues
+
+    @evalues.setter
+    def evalues(self, value):
+        self._evalues = value
+
+    @property
+    def k(self):
+        return self._k
+
+    @k.setter
+    def k(self, value):
+        self._k = value
+
+
+    def collect(self,**kwargs):
+        for name in kwargs:
+            value = kwargs[name]
+            self.__setattr__(name,value)
+
+
+
+
     def flush(self, cfg_idx, run_idx, **kwargs):
         """ Flushes kwargs to output folder. """
 
@@ -451,19 +500,19 @@ class Log:
             durations = []
             values = []
             cum_rewards = []
-            q_cum_rewards = []
+            evalues = []
             ks = []
             for log in run_log:
                 (not_nans, ) = np.where(np.logical_not(np.isnan(log.result_at_init)))
                 last_valid_index = not_nans[-1]
-                results_at_init.append(log.result_at_init[last_valid_index])
-                durations.append(log.duration[last_valid_index])
-                values.append(log.value_at_init[last_valid_index])
-                cum_rewards.append(log.cum_rewards[last_valid_index])
-                q_cum_rewards.append(log.q_cum_rewards[last_valid_index])
-                ks.append(log.k[last_valid_index])
-            plot_label = run_log[0].plot_label
-            output[plot_label] = {
+                results_at_init.append(log.result_at_init)
+                durations.append(log.duration)
+                # values.append(log.value_at_init[last_valid_index])
+                cum_rewards.append(log.cum_rewards)
+                evalues.append(log.evalues)
+                ks.append(log.k)
+            # plot_label = run_log[0].plot_label
+            output['table'] = {
                 'result_at_init' : {
                     'mean' : np.mean(results_at_init),
                     'std' : np.std(results_at_init),
@@ -476,29 +525,29 @@ class Log:
                     'min' : np.min(durations),
                     'max' : np.max(durations)
                     },
-                'value' : {
-                    'mean' : np.mean(values),
-                    'std' : np.std(values),
-                    'min' : np.min(values),
-                    'max' : np.max(values)
-                    },
+                # 'value' : {
+                #     'mean' : np.mean(values),
+                #     'std' : np.std(values),
+                #     'min' : np.min(values),
+                #     'max' : np.max(values)
+                #     },
                 'cum_reward' : {
                     'mean' : np.mean(cum_rewards),
                     'std' : np.std(cum_rewards),
                     'min' : np.min(cum_rewards),
                     'max' : np.max(cum_rewards)
                     },
-                'q_cum_reward' : {
-                    'mean' : np.mean(q_cum_rewards),
-                    'std' : np.std(q_cum_rewards),
-                    'min' : np.min(q_cum_rewards),
-                    'max' : np.max(q_cum_rewards)
+                'evalues' : {
+                    'mean' : np.mean(evalues),
+                    'std' : np.std(evalues),
+                    'min' : np.min(evalues),
+                    'max' : np.max(evalues)
                     },
                 'k' : {
-                    'mean' : np.mean(ks),
-                    'std' : np.std(ks),
-                    'min' : np.min(ks),
-                    'max' : np.max(ks)
+                    'mean' : np.mean(ks).astype(np.float64),
+                    'std' : np.std(ks).astype(np.float64),
+                    'min' : np.min(ks).astype(np.float64),
+                    'max' : np.max(ks).astype(np.float64)
                     }
                 }
 
@@ -512,7 +561,7 @@ class Log:
             y = np.stack([log.result_at_init for log in run_log])
             mean = np.mean(y, axis = 0)
             std = np.std(y, axis = 0)
-            g = sns.lineplot(x = run_log[0].index, y = mean, label = run_log[0].plot_label, ax = ax)
+            g = sns.lineplot(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   x = run_log[0].index, y = mean, label = run_log[0].plot_label, ax = ax)
             g.fill_between(run_log[0].index, mean - std, mean + std, color = plt.gca().lines[-1].get_color(), alpha = 0.2)
 
         if len(run_log[0].index) < 20:

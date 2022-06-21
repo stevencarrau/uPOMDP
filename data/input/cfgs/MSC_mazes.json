@@ -1,4 +1,4 @@
-{"MSC_mazes":[{"name":"MSC-maze5",
+{"MSC_mazes":[{"name":"SC-maze5",
 "formula_str":"Rmin=? [F \"goal\"]",
 "batch_size":200,
 "epochs":64,

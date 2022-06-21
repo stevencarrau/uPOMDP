@@ -43,18 +43,13 @@ endmodule
 module robot
     ax : [axMIN..axMAX] init 0;
     ay : [ayMIN..ayMAX] init 0;
-    slipped : bool init false;
-
     [placement] true ->  1/4: (ax'=ob1x-1) & (ay'=ob1y) + 1/4: (ax'=1) & (ay'=1) + 1/4: (ax'=2) & (ay'=1) + 1/4: (ax'=1) & (ay'=3);
 
-    [west] !crash -> (1-sl): (ax'=max(ax-1,axMIN)) + sl: (ax'=max(ax-2,axMIN));
-    [east] !crash -> (1-sl): (ax'=min(ax+1,axMAX)) + sl: (ax'=min(ax+2,axMAX));
-    [south]  !crash -> (1-sl): (ay'=min(ay+1,ayMAX)) + sl: (ay'=min(ay+2,ayMAX));
-    [north]  !crash -> (1-sl): (ay'=max(ay-1,ayMIN)) + sl: (ay'=max(ay-2,ayMIN));
-    [west] crash -> true;
-    [east] crash -> true;
-    [south]  crash -> true;
-    [north]  crash -> true;
+    [west] true -> (1-sl): (ax'=max(ax-1,axMIN)) + sl: (ax'=max(ax-2,axMIN));
+    [east] true -> (1-sl): (ax'=min(ax+1,axMAX)) + sl: (ax'=min(ax+2,axMAX));
+    [south]  true -> (1-sl): (ay'=min(ay+1,ayMAX)) + sl: (ay'=min(ay+2,ayMAX));
+    [north]  true -> (1-sl): (ay'=max(ay-1,ayMIN)) + sl: (ay'=max(ay-2,ayMIN));
+
 
 endmodule
 
