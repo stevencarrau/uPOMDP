@@ -9,5 +9,5 @@ with open('data/input/cfgs/'+filename+'.json') as f:
 for cfg in load_file[filename]:
    for policy in ["qmdp", "mdp"]:
       cfg["policy"] = policy
-      exp = Experiment(cfg["name"] + "_Large_" + policy, cfg, 100)
+      exp = Experiment(cfg["name"] + "_Large_" + policy, cfg, 2)
       exp.execute(False)

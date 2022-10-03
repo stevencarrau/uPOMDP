@@ -3,7 +3,7 @@
 "batch_size":1000,
 "epochs":250,
 "ctrx_gen":"crt_full",
-"rounds":100,
+"rounds":10,
 "p_init":{"sl":0.2},
 "p_evals": [{"sl": 0.1}, {"sl": 0.2}, {"sl": 0.3}, {"sl": 0.4}],
 "p_bounds":{"sl":[0.1,0.4]},
