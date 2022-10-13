@@ -1,0 +1,10 @@
+numpy==1.22.3
+scipy==1.8.0
+seaborn==0.11.2
+pandas==1.4.1
+joblib==1.1.0
+mem-top==0.1.6
+larq==0.12.2
+pytest==7.1.1
+transitions==0.8.11
+tensorflow
