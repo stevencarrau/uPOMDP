@@ -7,4 +7,4 @@ mem-top==0.1.6
 larq==0.12.2
 pytest==7.1.1
 transitions==0.8.11
-tensorflow
+tensorflow==2.8.0
