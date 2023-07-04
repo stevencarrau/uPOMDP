@@ -70,10 +70,13 @@ class Experiment:
 
             beliefs, states, hs, observations, policies, actions, rewards = net.simulate(pomdp, mdp, greedy = False, length = length)
 
+            print("POLICIES:", policies)
+
             num_actions = pomdp.num_choices_per_state[states]
             observation_labels = pomdp.observation_labels[observations]
             empirical_result, _ = utils.evaluate_performance(instance, states, rewards)
-            valid = empirical_result < 4 * mdp.state_values[0]
+            valid = empirical_result < 4 * mdp.state_values[mdp.initial_state]
+            assert valid, f"The empirical result is: {empirical_result}. The MDP state values are: {mdp.state_values}. The initial state is: {mdp.initial_state}. Value: {mdp.state_values[mdp.initial_state]}"
 
             until = np.argmax(observation_labels == instance.label_to_reach, axis = -1)
             until[until == 0] = length - 1
@@ -81,6 +84,7 @@ class Experiment:
             num_choices = pomdp.num_choices_per_state[states]
             log_policies = np.log(policies) / np.expand_dims(np.log(num_choices), axis = -1)
             log_policies[np.isinf(log_policies)] = 0
+            log_policies[np.isnan(log_policies)] = 0 # Maris: num_choices can be 1, for which the log is 0. Then, log_policies can contain NaN's but should probably be treated as inftys?
             all_entropies = np.sum(policies * - log_policies, axis = -1)
             relevant_entropies = all_entropies[np.logical_and(relevant_timesteps, num_actions > 1)]
             rnn_entropy = np.mean(relevant_entropies)
